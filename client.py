@@ -17,9 +17,7 @@ response = requests.put(
     BASE + "/Note", data={"noteID": 3, "noteName": "school"})
 print(response.json())
 input()
-response = requests.get(BASE + "/Note")
-print(response.json())
-input()
+
 response = requests.patch(
     BASE + "/Note", data={"noteID": 3, "noteName": "car"})
 print(response.json())
@@ -33,11 +31,54 @@ print(response.json())
 input()
 
 
-# response = requests.put(BASE + "/Note/3")
-# print(response.json())
-# input()
-# response = requests.put(BASE + "/Note/4")
-# print(response.json())
-# input()
-# response = requests.get(BASE + "/Note")
-# print(response.json())
+
+
+response = requests.put(BASE + "/Todo/1",data={"todoTask": "buy milk","todoNoteID":1})
+print(response.json())
+input()
+
+response = requests.get(BASE + "/Todo/1")
+print(response.json())
+input()
+
+response = requests.put(BASE + "/Todo/2",data={"todoTask": "buy juice","todoNoteID":1})
+print(response.json())
+input()
+
+response = requests.get(BASE + "/Todo/2")
+print(response.json())
+input()
+
+response = requests.put(BASE + "/Todo/3",data={"todoTask": "buy gift card","todoNoteID":2})
+print(response.json())
+input()
+
+
+response = requests.get(BASE + "/Note")
+print(response.json())
+input()
+
+
+
+response = requests.put(BASE + "/Todo/4",data={"todoTask": "study","todoNoteID":3})
+print(response.json())
+input()
+
+
+response = requests.patch(BASE + "/Todo/4", data={"todoTask":"game gang"})
+print(response.json())
+input()
+
+
+
+response = requests.get(BASE + "/Note")
+print(response.json())
+input()
+
+response = requests.delete(BASE+"/Note", data={"noteID":1})
+print(response.json())
+input()
+
+response = requests.get(BASE + "/Note")
+print(response.json())
+input()
