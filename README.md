@@ -2,8 +2,8 @@
 
 In this repo, I used python flask to build a simple todo list web API that can be tested using tools like postman. The main.py contains the implementation of the server side API methods, and the client.py is a test file for the main.py. It also provides some details as to how to use this API.
 
-There are two endpoints, 
-/Note and /Todo/todo_id 
+There are two endpoints, /Note and /Todo/todo_id 
+ex: http://127.0.0.1:5000/Note and http://127.0.0.1:5000/Todo/1
 
 I choose to include the todo_id as part of the endpoint because every CRUD operation on the todo database needs todo_id. 
 
