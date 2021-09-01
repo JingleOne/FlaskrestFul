@@ -2,47 +2,43 @@
 should allow a client to create a Todo Note, add Todos to a note, complete Todos for a note, list
 all Todos and delete both Todos and Notes."""
 
-import os
 from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 api = Api(app)
-try:
-    os.mkdir(os.getcwd()+'/db')
-except FileExistsError:
-    pass
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:////{os.getcwd()}/db/noteDatabase.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///noteDatabase.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-noteDb = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
 
-class NoteModel(noteDb.Model):
-    noteID = noteDb.Column(noteDb.Integer, primary_key=True)
-    noteName = noteDb.Column(noteDb.String(100), nullable=False)
+class Note(db.Model):
+    noteID = db.Column(db.Integer, primary_key=True)
+    noteName = db.Column(db.String(100), nullable=False)
+    todoList = db.relationship('Todo', backref='note', lazy=True)
 
-    def __repr__(self):
-        return f"NoteDB task = {noteName}"
+db.create_all()
+
+class Todo(db.Model):
+    todoID = db.Column(db.Integer, primary_key=True)
+    todoNoteID = db.Column(db.Integer, db.ForeignKey('note.noteID'),
+        nullable=False)
+    todoTask = db.Column(db.String(200), nullable=False)
+
+db.create_all()
 
 
-noteDb.create_all()
 
 
 note_putPatch_args = reqparse.RequestParser()
 note_putPatch_args.add_argument(
-    "noteID", type=int, help="Note id number is required", required=True)
+    "noteID", type=int, help=" id number is required", required=True)
 note_putPatch_args.add_argument(
     "noteName", type=str, help="Note name field is required",  required=True)
 
 note_get_args = reqparse.RequestParser()
 note_get_args.add_argument("noteID", type=int, help="Note id number")
-
-# note_patch_args = reqparse.RequestParser()
-# note_patch_args.add_argument(
-#     "noteID", type=int, help="Note id number is required", required=True)
-# note_patch_args.add_argument(
-#     "noteName", type=str, help="Note name field is required", required=True)
 
 note_delete_args = reqparse.RequestParser()
 note_delete_args.add_argument(
@@ -61,30 +57,30 @@ class Notes(Resource):
         args = note_get_args.parse_args()
         print("[DEBUGGINGGGGGGGG]", args)
         if args["noteID"]:
-            match = NoteModel.query.get(args["noteID"])
+            match = Note.query.get(args["noteID"])
             return match
         else:
-            return NoteModel.query.all()
+            return Note.query.all()
 
     @marshal_with(noteResourceField)
     def put(self):
         args = note_putPatch_args.parse_args()
-        matched = NoteModel.query.get(args["noteID"])
+        matched = Note.query.get(args["noteID"])
         if matched:
             abort(409, message="Note ID taken")
-        note = NoteModel(noteID=args["noteID"], noteName=args["noteName"])
-        noteDb.session.add(note)
-        noteDb.session.commit()
+        note = Note(noteID=args["noteID"], noteName=args["noteName"])
+        db.session.add(note)
+        db.session.commit()
         return note, 201
 
     @marshal_with(noteResourceField)
     def patch(self):
         args = note_putPatch_args.parse_args()
-        matched = NoteModel.query.get(args["noteID"])
+        matched = Note.query.get(args["noteID"])
         if not matched:
             abort(409, message="Note ID not found")
         matched.noteName = args["noteName"]
-        noteDb.session.commit()
+        db.session.commit()
         return matched, 200
 
         # return {args["noteID"]: data[args["noteID"]]}
@@ -92,12 +88,15 @@ class Notes(Resource):
     @marshal_with(noteResourceField)
     def delete(self):
         args = note_delete_args.parse_args()
-        matched = NoteModel.query.get(args["noteID"])
+        matched = Note.query.get(args["noteID"])
         if not matched:
             abort(409, message="Note ID not found")
-        noteDb.session.delete(matched)
-        noteDb.session.commit()
+        db.session.delete(matched)
+        db.session.commit()
         return matched, 200
+
+class Todos(Resource):
+    pass
 
 
 #todoData = {1: "buy milk", 2: "fix bank acc", 3: "assemble PC"}

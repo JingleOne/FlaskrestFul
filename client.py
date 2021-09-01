@@ -5,18 +5,18 @@ import requests
 
 BASE = "http://127.0.0.1:5000"
 
-# response = requests.put(
-#     BASE + "/Note", data={"noteID": 1, "noteName": "grocery"})
-# print(response.json())
-# input()
-# response = requests.put(
-#     BASE + "/Note", data={"noteID": 2, "noteName": "Target"})
-# print(response.json())
-# input()
-# response = requests.put(
-#     BASE + "/Note", data={"noteID": 3, "noteName": "school"})
-# print(response.json())
-# input()
+response = requests.put(
+    BASE + "/Note", data={"noteID": 1, "noteName": "grocery"})
+print(response.json())
+input()
+response = requests.put(
+    BASE + "/Note", data={"noteID": 2, "noteName": "Target"})
+print(response.json())
+input()
+response = requests.put(
+    BASE + "/Note", data={"noteID": 3, "noteName": "school"})
+print(response.json())
+input()
 response = requests.get(BASE + "/Note")
 print(response.json())
 input()
